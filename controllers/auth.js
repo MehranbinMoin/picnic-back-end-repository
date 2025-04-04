@@ -26,4 +26,12 @@ router.post('/sign-up', async (req, res) => {
     }
 })
 
+router.post('/sign-in', async (req, res) => {
+    try {
+        
+    } catch (err) {
+        res.status(500).json({ err: err.message })
+    }
+})
+
 module.exports = router
