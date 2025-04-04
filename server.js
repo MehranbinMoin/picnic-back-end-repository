@@ -8,6 +8,7 @@ const logger = require('morgan');
 
 const picnicJwtRouter = require('./controllers/picnic-jwt')
 const authRouter = require('./controllers/auth')
+const userRouter = require('./controllers/users')
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(logger('dev'));
 
 app.use('/auth', authRouter)
+app.use('/users', userRouter)
 app.use('/picnic-jwt', picnicJwtRouter)
 
 app.listen(3001, () => {
