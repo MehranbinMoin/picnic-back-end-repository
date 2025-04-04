@@ -15,7 +15,9 @@ router.get('/sign-token', (req, res) => {
 })
 
 router.post('/verify-token', (req, res) => {
-    res.json({ message: 'Your token is valid!' })
+    const token = req.headers.authorization
+
+    res.json({ token })
 })
 
 module.exports = router
