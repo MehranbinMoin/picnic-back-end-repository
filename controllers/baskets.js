@@ -14,4 +14,15 @@ router.post('/', verifyToken, async (req, res) => {
     }
 })
 
+router.get('/', verifyToken, async (req, res) => {
+    try {
+        const baskets = await Basket.find({})
+            .populate('author')
+            .sort({ createdAt: 'desc' })
+        res.status(200).json(baskets)
+    } catch (error) {
+        res.status(500).json({ err: error.message })
+    }
+})
+
 module.exports = router
