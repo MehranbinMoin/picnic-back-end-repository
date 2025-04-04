@@ -25,4 +25,13 @@ router.get('/', verifyToken, async (req, res) => {
     }
 })
 
+router.get('/:basketId', verifyToken, async (req, res) => {
+    try {
+        const basket = await Basket.findById(req.params.basketId).populate('author')
+        res.status(200).json(basket)
+    } catch (error) {
+        res.status(500).json({ err: error.message })
+    }
+})
+
 module.exports = router
