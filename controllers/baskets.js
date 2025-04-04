@@ -61,4 +61,18 @@ router.delete('/:basketId', verifyToken, async (req, res) => {
     }
 })
 
+router.post('/:basketId/comments', verifyToken, async (req, res) => {
+    try {
+        req.body.author = req.user._id
+        const basket = await Basket.findById(req.params.basketId)
+        basket.comments.push(req.body)
+        await basket.save()
+        const newComment = basket.comments[basket.comments.length -1]
+        newComment._doc.author = req.user
+        res.status(201).json(newComment)
+    } catch (error) {
+        res.status(500).json({ err: error.message })
+    }
+})
+
 module.exports = router
