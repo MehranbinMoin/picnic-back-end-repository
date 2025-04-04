@@ -83,11 +83,26 @@ router.put('/:basketId/comments/:commentId', verifyToken, async (req, res) => {
         const basket = await Basket.findById(req.params.basketId)
         const comment = basket.comments.id(req.params.commentId)
         if (comment.author.toString() !== req.user._id) {
-            return res.status(403).json({ message: 'You do not have permission to edit this comment.' })
+            return res.status(403).json({ message: 'You do not have permission to edit this comment!' })
         }
         comment.text = req.body.text
         await basket.save()
-        res.status(200).json({ message: 'Comment updated successfully.' })
+        res.status(200).json({ message: 'Comment updated successfully!' })
+    } catch (error) {
+        res.status(500).json({ err: error.message })
+    }
+})
+
+router.delete('/:basketId/comments/:commentId', verifyToken, async (req, res) => {
+    try {
+        const basket = await Basket.findById(req.params.basketId)
+        const comment = basket.comments.id(req.params.commentId)
+        if (comment.author.toString() !== req.user._id) {
+            return res.status(403).json({ message: 'You do not have permission to delete this comment!' })
+        }
+        basket.comments.remove({ _id: req.params.commentId})
+        await basket.save()
+        res.status(200).json({ message: 'Comment deleted successfully!' })
     } catch (error) {
         res.status(500).json({ err: error.message })
     }
