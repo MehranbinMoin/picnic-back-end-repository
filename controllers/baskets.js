@@ -27,7 +27,10 @@ router.get('/', verifyToken, async (req, res) => {
 
 router.get('/:basketId', verifyToken, async (req, res) => {
     try {
-        const basket = await Basket.findById(req.params.basketId).populate('author')
+        const basket = await Basket.findById(req.params.basketId).populate([
+            'author',
+            'comments.author'
+        ])
         res.status(200).json(basket)
     } catch (error) {
         res.status(500).json({ err: error.message })
@@ -67,9 +70,24 @@ router.post('/:basketId/comments', verifyToken, async (req, res) => {
         const basket = await Basket.findById(req.params.basketId)
         basket.comments.push(req.body)
         await basket.save()
-        const newComment = basket.comments[basket.comments.length -1]
+        const newComment = basket.comments[basket.comments.length - 1]
         newComment._doc.author = req.user
         res.status(201).json(newComment)
+    } catch (error) {
+        res.status(500).json({ err: error.message })
+    }
+})
+
+router.put('/:basketId/comments/:commentId', verifyToken, async (req, res) => {
+    try {
+        const basket = await Basket.findById(req.params.basketId)
+        const comment = basket.comments.id(req.params.commentId)
+        if (comment.author.toString() !== req.user._id) {
+            return res.status(403).json({ message: 'You do not have permission to edit this comment.' })
+        }
+        comment.text = req.body.text
+        await basket.save()
+        res.status(200).json({ message: 'Comment updated successfully.' })
     } catch (error) {
         res.status(500).json({ err: error.message })
     }
