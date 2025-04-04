@@ -40,9 +40,22 @@ router.put('/:basketId', verifyToken, async (req, res) => {
         if (!basket.author.equals(req.user._id)) {
             return res.status(403).json({ err: 'You are not the creator of this basket!' })
         }
-        const updatedBasket = await Basket.findByIdAndUpdate(req.params.basketId, req.body, { new: true})
+        const updatedBasket = await Basket.findByIdAndUpdate(req.params.basketId, req.body, { new: true })
         updatedBasket._doc.author = req.user
         res.status(200).json(updatedBasket)
+    } catch (error) {
+        res.status(500).json({ err: error.message })
+    }
+})
+
+router.delete('/:basketId', verifyToken, async (req, res) => {
+    try {
+        const basket = await Basket.findById(req.params.basketId)
+        if (!basket.author.equals(req.user._id)) {
+            return res.status(403).json({ err: 'You are not the creator of this basket!' })
+        }
+        const deletedBasket = await Basket.findByIdAndDelete(req.params.basketId)
+        res.status(200).json(deletedBasket)
     } catch (error) {
         res.status(500).json({ err: error.message })
     }
