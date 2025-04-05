@@ -16,6 +16,10 @@ const basketSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    title: {
+        type: String,
+        require: true,
+    },
     description: {
         type: String,
         require: true,
